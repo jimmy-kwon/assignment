@@ -16,10 +16,18 @@ function App() {
   const [currentShape, setCurrentShape] = useState<Shape | null>(null);
   const [mode, setMode] = useState<'rectangle' | 'circle' | 'delete' | 'move' | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedShapeId, setSelectedShapeId] = useState<number | null>(null);
 
   const startDrawing = (drawingMode: 'rectangle' | 'circle') => {
     setMode(drawingMode);
     setCurrentShape(null);
+    setSelectedShapeId(null);
+  };
+
+  const setDeleteMode = () => {
+    setMode('delete');
+    setCurrentShape(null);
+    setSelectedShapeId(null);
   };
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
@@ -53,11 +61,21 @@ function App() {
     setIsDragging(false);
   };
 
+  const handleShapeClick = (shapeId: number, e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (mode === 'delete') {
+      setShapes(prevShapes => prevShapes.filter(shape => shape.id !== shapeId));
+    } else {
+      setSelectedShapeId(shapeId);
+    }
+  };
+
   return (
       <div className="App">
         <div className="toolbar">
           <button className="simple-button" onClick={() => startDrawing('rectangle')}>사각형 그리기</button>
           <button className="simple-button" onClick={() => startDrawing('circle')}>원 그리기</button>
+          <button className="simple-button" onClick={setDeleteMode}>선택 지우기</button>
         </div>
         <div
             className="drawing-area"
@@ -75,9 +93,10 @@ function App() {
                     width: Math.abs(shape.width),
                     height: Math.abs(shape.height),
                     backgroundColor: shape.type === 'circle' ? 'blue' : 'transparent',
-                    border: shape.type === 'circle' ? '2px solid blue' : '2px solid black',
+                    border: shape.id === selectedShapeId ? '2px dashed red' : (shape.type === 'circle' ? '2px solid blue' : '2px solid black'),
                     borderRadius: shape.type === 'circle' ? '50%' : '0',
                   }}
+                  onClick={(e) => handleShapeClick(shape.id, e)}
               />
           ))}
           {currentShape && (

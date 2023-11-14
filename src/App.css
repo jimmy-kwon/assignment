@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+/* 기존 스타일에 추가 */
+.drawing-area {
+  position: relative;
+  width: 80%;
+  height: 500px;
+  border: 2px solid black;
+  margin: 20px auto;
+}
+/* 기존 스타일에 추가 */
