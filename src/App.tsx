@@ -30,6 +30,10 @@ function App() {
     setSelectedShapeId(null);
   };
 
+  const clearAllShapes = () => {
+    setShapes([]);
+  };
+
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -75,6 +79,7 @@ function App() {
         <div className="toolbar">
           <button className="simple-button" onClick={() => startDrawing('rectangle')}>사각형 그리기</button>
           <button className="simple-button" onClick={() => startDrawing('circle')}>원 그리기</button>
+          <button className="simple-button" onClick={clearAllShapes}>모두 지우기</button>
           <button className="simple-button" onClick={setDeleteMode}>선택 지우기</button>
         </div>
         <div
