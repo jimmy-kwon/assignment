@@ -17,6 +17,7 @@ function App() {
   const [mode, setMode] = useState<'rectangle' | 'circle' | 'delete' | 'move' | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedShapeId, setSelectedShapeId] = useState<number | null>(null);
+  const [movingShapeId, setMovingShapeId] = useState<number | null>(null);
 
   const startDrawing = (drawingMode: 'rectangle' | 'circle') => {
     setMode(drawingMode);
@@ -30,6 +31,11 @@ function App() {
     setSelectedShapeId(null);
   };
 
+  const setMoveMode = () => {
+    setMode('move');
+    setCurrentShape(null);
+  };
+
   const clearAllShapes = () => {
     setShapes([]);
   };
@@ -39,7 +45,10 @@ function App() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (mode === 'rectangle' || mode === 'circle') {
+    if (mode === 'move' && selectedShapeId) {
+      setMovingShapeId(selectedShapeId);
+      setIsDragging(true);
+    } else if (mode === 'rectangle' || mode === 'circle') {
       const newShape = { id: Date.now(), order: shapes.length + 1, x, y, width: 0, height: 0, type: mode };
       setCurrentShape(newShape);
       setIsDragging(true);
@@ -47,22 +56,29 @@ function App() {
   };
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!isDragging || (mode !== 'rectangle' && mode !== 'circle')) return;
+    if (!isDragging) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (currentShape) {
-      setCurrentShape({...currentShape, width: x - currentShape.x, height: y - currentShape.y});
+    if (mode === 'rectangle' || mode === 'circle') {
+      if (currentShape) {
+        setCurrentShape({...currentShape, width: x - currentShape.x, height: y - currentShape.y});
+      }
+    } else if (mode === 'move' && movingShapeId !== null) {
+      setShapes(shapes.map(shape =>
+          shape.id === movingShapeId ? {...shape, x, y} : shape
+      ));
     }
   };
 
   const handleMouseUp = () => {
-    if (isDragging && currentShape && (mode === 'rectangle' || mode === 'circle')) {
+    setIsDragging(false);
+    setMovingShapeId(null);
+    if (currentShape && (mode === 'rectangle' || mode === 'circle')) {
       setShapes([...shapes, currentShape]);
       setCurrentShape(null);
     }
-    setIsDragging(false);
   };
 
   const handleShapeClick = (shapeId: number, e: MouseEvent<HTMLDivElement>) => {
@@ -81,6 +97,7 @@ function App() {
           <button className="simple-button" onClick={() => startDrawing('circle')}>원 그리기</button>
           <button className="simple-button" onClick={clearAllShapes}>모두 지우기</button>
           <button className="simple-button" onClick={setDeleteMode}>선택 지우기</button>
+          <button className="simple-button" onClick={setMoveMode}>도형 이동</button>
         </div>
         <div
             className="drawing-area"
