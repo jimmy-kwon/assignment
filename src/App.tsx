@@ -27,7 +27,7 @@ function App() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (mode === 'rectangle') {
+    if (mode === 'rectangle' || mode === 'circle') {
       const newShape = { id: Date.now(), order: shapes.length + 1, x, y, width: 0, height: 0, type: mode };
       setCurrentShape(newShape);
       setIsDragging(true);
@@ -35,7 +35,7 @@ function App() {
   };
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!isDragging || mode !== 'rectangle') return;
+    if (!isDragging || (mode !== 'rectangle' && mode !== 'circle')) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -46,7 +46,7 @@ function App() {
   };
 
   const handleMouseUp = () => {
-    if (isDragging && currentShape && mode === 'rectangle') {
+    if (isDragging && currentShape && (mode === 'rectangle' || mode === 'circle')) {
       setShapes([...shapes, currentShape]);
       setCurrentShape(null);
     }
@@ -57,6 +57,7 @@ function App() {
       <div className="App">
         <div className="toolbar">
           <button className="simple-button" onClick={() => startDrawing('rectangle')}>사각형 그리기</button>
+          <button className="simple-button" onClick={() => startDrawing('circle')}>원 그리기</button>
         </div>
         <div
             className="drawing-area"
@@ -73,7 +74,9 @@ function App() {
                     top: shape.y,
                     width: Math.abs(shape.width),
                     height: Math.abs(shape.height),
-                    border: '2px solid black',
+                    backgroundColor: shape.type === 'circle' ? 'blue' : 'transparent',
+                    border: shape.type === 'circle' ? '2px solid blue' : '2px solid black',
+                    borderRadius: shape.type === 'circle' ? '50%' : '0',
                   }}
               />
           ))}
@@ -84,8 +87,9 @@ function App() {
                 top: currentShape.y,
                 width: Math.abs(currentShape.width),
                 height: Math.abs(currentShape.height),
-                backgroundColor: 'rgba(0,0,0,0.1)',
+                backgroundColor: currentShape.type === 'circle' ? 'rgba(0, 0, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
                 border: '2px dashed grey',
+                borderRadius: currentShape.type === 'circle' ? '50%' : '0',
               }}/>
           )}
         </div>
