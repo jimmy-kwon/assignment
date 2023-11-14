@@ -17,7 +17,6 @@ function App() {
   const [mode, setMode] = useState<'rectangle' | 'circle' | 'delete' | 'move' | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedShapeId, setSelectedShapeId] = useState<number | null>(null);
-  const [movingShapeId, setMovingShapeId] = useState<number | null>(null);
 
   const startDrawing = (drawingMode: 'rectangle' | 'circle') => {
     setMode(drawingMode);
@@ -40,13 +39,39 @@ function App() {
     setShapes([]);
   };
 
+  const bringToFront = () => {
+    if (selectedShapeId !== null) {
+      setShapes(prevShapes => {
+        const shape = prevShapes.find(shape => shape.id === selectedShapeId);
+        if (shape) {
+          return [...prevShapes.filter(s => s.id !== selectedShapeId), shape];
+        }
+        return prevShapes;
+      });
+    }
+  };
+
+  const sendToBack = () => {
+    if (selectedShapeId !== null) {
+      setShapes(prevShapes => {
+        const shape = prevShapes.find(shape => shape.id === selectedShapeId);
+        if (shape) {
+          return [shape, ...prevShapes.filter(s => s.id !== selectedShapeId)];
+        }
+        return prevShapes;
+      });
+    }
+  };
+
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
     if (mode === 'move' && selectedShapeId) {
-      setMovingShapeId(selectedShapeId);
+      setShapes(shapes.map(shape =>
+          shape.id === selectedShapeId ? {...shape, x, y} : shape
+      ));
       setIsDragging(true);
     } else if (mode === 'rectangle' || mode === 'circle') {
       const newShape = { id: Date.now(), order: shapes.length + 1, x, y, width: 0, height: 0, type: mode };
@@ -65,16 +90,15 @@ function App() {
       if (currentShape) {
         setCurrentShape({...currentShape, width: x - currentShape.x, height: y - currentShape.y});
       }
-    } else if (mode === 'move' && movingShapeId !== null) {
+    } else if (mode === 'move' && selectedShapeId !== null) {
       setShapes(shapes.map(shape =>
-          shape.id === movingShapeId ? {...shape, x, y} : shape
+          shape.id === selectedShapeId ? {...shape, x, y} : shape
       ));
     }
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    setMovingShapeId(null);
     if (currentShape && (mode === 'rectangle' || mode === 'circle')) {
       setShapes([...shapes, currentShape]);
       setCurrentShape(null);
@@ -92,12 +116,16 @@ function App() {
 
   return (
       <div className="App">
+        <br></br>
+
         <div className="toolbar">
-          <button className="simple-button" onClick={() => startDrawing('rectangle')}>사각형 그리기</button>
-          <button className="simple-button" onClick={() => startDrawing('circle')}>원 그리기</button>
-          <button className="simple-button" onClick={clearAllShapes}>모두 지우기</button>
-          <button className="simple-button" onClick={setDeleteMode}>선택 지우기</button>
-          <button className="simple-button" onClick={setMoveMode}>도형 이동</button>
+          <button className="simple-button" onClick={() => startDrawing('rectangle')}>사각형 그리기</button>&nbsp;
+          <button className="simple-button" onClick={() => startDrawing('circle')}>원 그리기</button>&nbsp;
+          <button className="simple-button" onClick={clearAllShapes}>모두 지우기</button>&nbsp;
+          <button className="simple-button" onClick={setDeleteMode}>선택 지우기</button>&nbsp;
+          <button className="simple-button" onClick={setMoveMode}>도형 이동</button>&nbsp;
+          <button className="simple-button" onClick={bringToFront}>맨 앞으로 가져오기</button>&nbsp;
+          <button className="simple-button" onClick={sendToBack}>맨 뒤로 보내기</button>&nbsp;
         </div>
         <div
             className="drawing-area"
