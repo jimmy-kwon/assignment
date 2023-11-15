@@ -1,46 +1,62 @@
-# Getting Started with Create React App
+# 간단한 그림판 어플리케이션
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+간단한 그림판 어플리케이션는 리액트,타입스크립트로 작성되었으며 Dom을 이용하여 만든 코드 입니다.
 
-## Available Scripts
+## 주요 기능
 
-In the project directory, you can run:
+1. **도형 그리기**: "사각형 그리기" 또는 "원 그리기" 버튼을 클릭하여 사각형 또는 원을 그릴 수 있습니다. 그린 도형은 화면에 표시됩니다.
 
-### `npm start`
+2. **도형 삭제**: "선택 지우기" 모드를 활성화하고 그림을 클릭하면 선택한 도형을 삭제할 수 있습니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+3. **도형 이동**: "도형 이동" 모드를 활성화하고 도형을 드래그하여 이동할 수 있습니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+4. **맨 앞으로/맨 뒤로**: 선택한 도형을 맨 앞으로 가져오거나 맨 뒤로 보낼 수 있습니다.
 
-### `npm test`
+5. **모든 도형 삭제**: 화면에 그려진 모든 도형을 삭제합니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+6. **도형 정보 표시**: 현재 화면에 그려진 사각형과 원의 수를 표시합니다.
 
-### `npm run build`
+7. **로컬 스토리지 사용량 추정**: 현재 로컬 스토리지 사용량을 추정하여 표시합니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 주요 함수
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `startDrawing(drawingMode: 'rectangle' | 'circle')`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+사각형 또는 원 그리기 모드를 설정합니다.
 
-### `npm run eject`
+### `setDeleteMode()`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+도형 삭제 모드를 설정합니다.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `setMoveMode()`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+도형 이동 모드를 설정합니다.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### `clearAllShapes()`
 
-## Learn More
+화면에 그려진 모든 도형을 삭제합니다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### `countShapes(type: 'rectangle' | 'circle'): number`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+특정 타입의 도형 개수를 세는 함수입니다.
+
+### `estimateLocalStorageUsage(): string`
+
+로컬 스토리지 사용량을 추정하는 함수입니다.
+
+### `bringToFront()`
+
+선택한 도형을 맨 앞으로 가져옵니다.
+
+### `sendToBack()`
+
+선택한 도형을 맨 뒤로 보냅니다.
+
+## 사용 방법
+
+1. 프로젝트를 클론합니다.
+
+2. 프로젝트 폴더로 이동한 후, 다음 명령어를 실행하면 http://localhost:3000 에 접속하여 그림판을 사용하실 수 있습니다
+
+   ```bash
+   npm start
